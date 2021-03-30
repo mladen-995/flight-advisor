@@ -24,7 +24,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('cities', [CityController::class, 'index']);
 Route::post('cities', [CityController::class, 'store']);
 
-Route::post('comments/create', [CommentController::class, 'store']);
+Route::post('comments', [CommentController::class, 'store']);
 Route::put('comments/{comment}', [CommentController::class, 'update']);
 Route::delete('comments/{comment}', [CommentController::class, 'delete']);
 
