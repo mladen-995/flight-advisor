@@ -14,6 +14,11 @@ class City extends Model
 
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Comment::class)->latest();
+    }
+
+    public function getLatestNthComments(int $numberOfComments)
+    {
+        return $this->comments->take($numberOfComments);
     }
 }
