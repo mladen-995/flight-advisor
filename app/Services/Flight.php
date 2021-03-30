@@ -4,7 +4,10 @@ namespace App\Services;
 
 class Flight
 {
-    private array $routes;
+    /**
+     * @var array
+     */
+    private $routes;
 
     public function __construct(array $routes)
     {

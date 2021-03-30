@@ -6,9 +6,15 @@ use Illuminate\Support\Collection;
 
 class AirportVisitor
 {
-    private array $visitedAirports = [];
+    /**
+     * @var array
+     */
+    private $visitedAirports = [];
 
-    private int $totalNumberOfAirports;
+    /**
+     * @var int
+     */
+    private $totalNumberOfAirports;
 
     public function __construct(int $totalNumberOfAirports)
     {

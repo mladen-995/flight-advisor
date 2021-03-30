@@ -9,15 +9,35 @@ use Illuminate\Support\Collection;
 
 class CheapestFlightFinder
 {
-    private array $pricePerDestinationAirport = [];
-    private array $navigationToDestinationCity = [];
+    /**
+     * @var array
+     */
+    private $pricePerDestinationAirport = [];
 
-    private Airport $sourceAirport;
-    private string $destinationCity;
+    /**
+     * @var array
+     */
+    private $navigationToDestinationCity = [];
 
-    private Collection $airports;
+    /**
+     * @var Airport
+     */
+    private $sourceAirport;
 
-    private AirportVisitor $airportVisitor;
+    /**
+     * @var string
+     */
+    private $destinationCity;
+
+    /**
+     * @var Collection
+     */
+    private $airports;
+
+    /**
+     * @var AirportVisitor
+     */
+    private $airportVisitor;
 
     public function __construct(AirportVisitor $airportVisitor, Collection $airports)
     {

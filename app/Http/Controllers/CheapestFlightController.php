@@ -8,7 +8,10 @@ use App\Services\CheapestPathService;
 
 class CheapestFlightController extends Controller
 {
-    private CheapestFlightService $cheapestFlightService;
+    /**
+     * @var CheapestFlightService
+     */
+    private $cheapestFlightService;
 
     public function __construct(CheapestFlightService $cheapestFlightService)
     {

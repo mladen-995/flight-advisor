@@ -8,12 +8,32 @@ use App\Exceptions\NoFlightCandidateFoundException;
 
 class CheapestFlightService
 {
+    /**
+     * @var CheapestFlightFinder
+     */
     private $findRoute;
 
-    private array $flightCandidates;
+    private $airports;
 
-    private string $sourceCity;
-    private string $destinationCity;
+    /**
+     * @var array
+     */
+    private $flightCandidates;
+
+    /**
+     * @var string
+     */
+    private $sourceCity;
+
+    /**
+     * @var string
+     */
+    private $destinationCity;
+
+    public function construct()
+    {
+        $this->airports = Airport::select('id', 'name', 'city')->with('sourceRoutes:source_airport_id,destination_airport_id,price')->get();
+    }
 
     public function find(string $sourceCity, string $destinationCity): Flight
     {
@@ -21,11 +41,10 @@ class CheapestFlightService
         $this->destinationCity = $destinationCity;
         $this->flightCandidates = [];
 
-        $airports = Airport::select('id', 'name', 'city')->with('sourceRoutes:source_airport_id,destination_airport_id,price')->get();
 
-        $sourceAirports = $airports->where('city', $sourceCity);
+        $sourceAirports = $this->airports->where('city', $sourceCity);
 
-        $this->findRoute = new CheapestFlightFinder(new AirportVisitor($airports->count()), $airports);
+        $this->findRoute = new CheapestFlightFinder(new AirportVisitor($this->airports->count()), $airports);
 
         foreach($sourceAirports as $sourceAirport) {
             try {
