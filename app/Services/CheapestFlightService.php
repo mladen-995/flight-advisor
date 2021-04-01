@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Exceptions\FlightNotFoundException;
-use App\Models\Airport;
 use App\Exceptions\NoFlightCandidateFoundException;
+use App\Repositories\AirportRepository;
+use Illuminate\Support\Collection;
 
 class CheapestFlightService
 {
@@ -13,6 +14,9 @@ class CheapestFlightService
      */
     private $findRoute;
 
+    /**
+     * @var Collection
+     */
     private $airports;
 
     /**
@@ -30,21 +34,20 @@ class CheapestFlightService
      */
     private $destinationCity;
 
-    public function construct()
+    public function __construct(AirportRepository $airportRepository)
     {
-        $this->airports = Airport::select('id', 'name', 'city')->with('sourceRoutes:source_airport_id,destination_airport_id,price')->get();
+        $this->airports = $airportRepository->getAirportsWithRoutes();
     }
 
-    public function find(string $sourceCity, string $destinationCity): Flight
+    public function find(string $sourceCity, string $destinationCity)
     {
         $this->sourceCity = $sourceCity;
         $this->destinationCity = $destinationCity;
         $this->flightCandidates = [];
 
-
         $sourceAirports = $this->airports->where('city', $sourceCity);
 
-        $this->findRoute = new CheapestFlightFinder(new AirportVisitor($this->airports->count()), $airports);
+        $this->findRoute = new CheapestFlightFinder(new AirportVisitor($this->airports->count()), $this->airports);
 
         foreach($sourceAirports as $sourceAirport) {
             try {
@@ -52,7 +55,6 @@ class CheapestFlightService
             } catch (FlightNotFoundException $exception) {
                 continue;
             }
-
         }
 
         return $this->getCheapestFlightFromFoundCandidates();
