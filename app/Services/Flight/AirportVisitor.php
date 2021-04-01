@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Services;
-
-use Illuminate\Support\Collection;
+namespace App\Services\Flight;
 
 class AirportVisitor
 {

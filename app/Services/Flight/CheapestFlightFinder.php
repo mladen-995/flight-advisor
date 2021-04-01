@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Flight;
 
 use App\Exceptions\FlightNotFoundException;
 use App\Models\Airport;
@@ -13,11 +13,6 @@ class CheapestFlightFinder
      * @var array
      */
     private $pricePerDestinationAirport = [];
-
-    /**
-     * @var array
-     */
-    private $navigationToDestinationCity = [];
 
     /**
      * @var Airport
@@ -39,6 +34,11 @@ class CheapestFlightFinder
      */
     private $airportVisitor;
 
+    /**
+     * @var FlightCollection
+     */
+    private $flightCollection;
+
     public function __construct(AirportVisitor $airportVisitor, Collection $airports)
     {
         $this->airportVisitor = $airportVisitor;
@@ -50,6 +50,7 @@ class CheapestFlightFinder
         $this->sourceAirport = $sourceAirport;
         $this->destinationCity = $destinationCity;
 
+        $this->flightCollection = new FlightCollection();
         $this->setSourceAirport($sourceAirport);
         $this->airportVisitor->emptyVisitedAirports();
 
@@ -59,7 +60,7 @@ class CheapestFlightFinder
             $this->airportVisitor->visit($airportToVisit->id);
 
             if ($airportToVisit->city === $destinationCity) {
-                return new Flight($this->navigationToDestinationCity[$airportToVisit->id]);
+                return $this->flightCollection->getFlightToDestinationAirport($airportToVisit->id);
             }
 
             foreach($airportToVisit->sourceRoutes as $route) {
@@ -71,7 +72,7 @@ class CheapestFlightFinder
     private function setSourceAirport(Airport $sourceAirport): void
     {
         $this->pricePerDestinationAirport[$sourceAirport->id] = 0;
-        $this->navigationToDestinationCity[$sourceAirport->id] = [];
+        $this->flightCollection->setStartingPoint($sourceAirport->id);
     }
 
     private function findNextCheapestAirportOrThrowException(): ?Airport
@@ -96,29 +97,19 @@ class CheapestFlightFinder
         return $this->airports->find($nextAirportId);
     }
 
-    private function updatePriceAndPathToDestinationAirportIfNotVisited(Route $route)
+    private function updatePriceAndPathToDestinationAirportIfNotVisited(Route $route): void
     {
         if ($this->airportVisitor->isAirportVisited($route->destination_airport_id)) {
             return;
         }
 
         $this->updatePriceToDestinationAirport($route);
-        $this->updatePathToDestinationAirport($route);
+        $this->flightCollection->addFlightWithRoute($route);
     }
 
     private function updatePriceToDestinationAirport(Route $route): void
     {
-        $this->pricePerDestinationAirport[$route->destination_airport_id] = $this->pricePerDestinationAirport[$route->source_airport_id] + $route->price;
-    }
-
-    private function updatePathToDestinationAirport(Route $route): void
-    {
-        $newPath = $this->navigationToDestinationCity[$route->source_airport_id];
-        $newPath[] = [
-            'source' => $route->sourceAirport->city,
-            'destination' => $route->destinationAirport->city,
-            'price' => $route->price
-        ];
-        $this->navigationToDestinationCity[$route->destination_airport_id] = $newPath;
+        $this->pricePerDestinationAirport[$route->destination_airport_id] =
+            $this->pricePerDestinationAirport[$route->source_airport_id] + $route->price;
     }
 }

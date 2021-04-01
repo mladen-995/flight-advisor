@@ -5,15 +5,13 @@ namespace App\Services;
 use App\Exceptions\FlightNotFoundException;
 use App\Exceptions\NoFlightCandidateFoundException;
 use App\Repositories\AirportRepository;
+use App\Services\Flight\AirportVisitor;
+use App\Services\Flight\CheapestFlightFinder;
+use App\Services\Flight\Flight;
 use Illuminate\Support\Collection;
 
 class CheapestFlightService
 {
-    /**
-     * @var CheapestFlightFinder
-     */
-    private $findRoute;
-
     /**
      * @var Collection
      */
@@ -39,7 +37,7 @@ class CheapestFlightService
         $this->airports = $airportRepository->getAirportsWithRoutes();
     }
 
-    public function find(string $sourceCity, string $destinationCity)
+    public function find(string $sourceCity, string $destinationCity): Flight
     {
         $this->sourceCity = $sourceCity;
         $this->destinationCity = $destinationCity;
@@ -47,17 +45,26 @@ class CheapestFlightService
 
         $sourceAirports = $this->airports->where('city', $sourceCity);
 
-        $this->findRoute = new CheapestFlightFinder(new AirportVisitor($this->airports->count()), $this->airports);
+        $flightFinder = new CheapestFlightFinder(new AirportVisitor($this->airports->count()), $this->airports);
 
         foreach($sourceAirports as $sourceAirport) {
-            try {
-                $this->flightCandidates[] = $this->findRoute->findFlightFromAirportToCity($sourceAirport, $destinationCity);
-            } catch (FlightNotFoundException $exception) {
-                continue;
-            }
+            $this->appendFlightCandidateIfAvailable($flightFinder, $sourceAirport, $destinationCity);
         }
 
         return $this->getCheapestFlightFromFoundCandidates();
+    }
+
+    private function appendFlightCandidateIfAvailable(
+        CheapestFlightFinder $findRoute,
+        $sourceAirport,
+        string $destinationCity
+    ): void
+    {
+        try {
+            $this->flightCandidates[] = $findRoute->findFlightFromAirportToCity($sourceAirport, $destinationCity);
+        } catch (FlightNotFoundException $exception) {
+            return;
+        }
     }
 
     private function getCheapestFlightFromFoundCandidates(): Flight

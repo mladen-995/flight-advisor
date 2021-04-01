@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Flight;
+
+use App\Models\Route;
 
 class Flight
 {
@@ -27,5 +29,14 @@ class Flight
         }
 
         return $totalPrice;
+    }
+
+    public function addRoute(Route $route): void
+    {
+        $this->routes[] = [
+            'source' => $route->sourceAirport->city,
+            'destination' => $route->destinationAirport->city,
+            'price' => $route->price
+        ];
     }
 }
