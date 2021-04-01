@@ -51,6 +51,7 @@ class CheapestFlightFinder
         $this->destinationCity = $destinationCity;
 
         $this->flightCollection = new FlightCollection();
+        $this->pricePerDestinationAirport = [];
         $this->setSourceAirport($sourceAirport);
         $this->airportVisitor->emptyVisitedAirports();
 
