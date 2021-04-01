@@ -21,11 +21,11 @@ class ImportRoutes extends Command
             $route = explode(',', trim($line));
 
             if ($line == null) {
-                break;
+                continue;
             }
 
-            if (!in_array($route[3], $airportsIds) || !in_array($route[5], $airportsIds)) {
-                break;
+            if (!$this->shouldRouteBeCreated($route, $airportsIds)) {
+                continue;
             }
 
             Route::firstOrCreate([
@@ -39,11 +39,15 @@ class ImportRoutes extends Command
                 'stops' => str_replace("\"", '', $route[7]),
                 'equipment' => str_replace("\"", '', $route[8]),
                 'price' => str_replace("\"", '', $route[9]),
-                'created_by' => date('Y-m-d H:i:s'),
-                'updated_by' => date('Y-m-d H:i:s'),
             ]);
         }
 
         fclose($file);
+    }
+
+    private function shouldRouteBeCreated(array $route, array $airportsIds): bool
+    {
+        return in_array(str_replace("\"", '', $route[3]), $airportsIds) &&
+            in_array(str_replace("\"", '', $route[5]), $airportsIds);
     }
 }

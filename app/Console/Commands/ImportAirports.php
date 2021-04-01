@@ -12,7 +12,7 @@ class ImportAirports extends Command
 
     public function handle()
     {
-        $citiesIds = City::pluck('id')->toArray();
+        $cities = City::pluck('name')->toArray();
 
         $file = fopen(storage_path("app/airports.txt"), "r");
 
@@ -20,8 +20,8 @@ class ImportAirports extends Command
             $line = fgets($file);
             $airport = explode(',', trim($line));
 
-            if ($line == null || !in_array($airport[0], $citiesIds)) {
-                break;
+            if ($line == null || !in_array(str_replace("\"", '', $airport[2]), $cities)) {
+                continue;
             }
 
             Airport::firstOrCreate([
