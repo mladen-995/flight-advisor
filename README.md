@@ -8,6 +8,28 @@ Before you set up project on local environment, please ensure that you have inst
 ## Installation
 In order to set up the project, after you pull it on a local machine, you need to run the following:
 1. Copy `.env.example` to `.env`
-1. `./vendor/bin/sail up -d` - That will run Docker containers
 1. `./vendor/bin/sail artisan composer install`
+1. `./vendor/bin/sail up -d` - It will run Docker containers
 1. `./vendor/bin/sail artisan migrate --seed`
+
+## Troubleshooting
+Ports for web server and MySQL are changed, so it doesn't have conflicts with the instances on local machine.
+If you want to connect to MySQL database, you can use credentials from `.env`, but for the port please use value from `FORWARD_DB_PORT` inside `.env`.
+
+## Initial users
+After you perform installation steps, you will see two users in the database which you can use right away.
+
+ADMIN:  
+Username: `mladen`  
+Password: `password`
+
+REGULAR USER:  
+Username: `korisnik`  
+Password: `password`  
+
+## Import of airports and routes
+After you create few cities, you can import airports and routes for those cities.
+
+In order to do that, please run the following in the exact order:
+1. `./vendor/bin/sail artisan import-airports`
+1. `./vendor/bin/sail artisan import-routes`
