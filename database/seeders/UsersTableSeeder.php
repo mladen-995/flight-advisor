@@ -23,5 +23,13 @@ class UsersTableSeeder extends Seeder
             'last_name' => 'Simijonović',
             'role_id' => Role::find(Role::ADMIN)->id
         ]);
+
+        User::create([
+            'username' => 'korisnik',
+            'password' => Hash::make('password'),
+            'first_name' => 'Nikola',
+            'last_name' => 'Petrović',
+            'role_id' => Role::find(Role::USER)->id
+        ]);
     }
 }
