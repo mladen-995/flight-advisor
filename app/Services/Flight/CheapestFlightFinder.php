@@ -47,13 +47,7 @@ class CheapestFlightFinder
 
     public function findFlightFromAirportToCity(Airport $sourceAirport, string $destinationCity): Flight
     {
-        $this->sourceAirport = $sourceAirport;
-        $this->destinationCity = $destinationCity;
-
-        $this->flightCollection = new FlightCollection();
-        $this->pricePerDestinationAirport = [];
-        $this->setSourceAirport($sourceAirport);
-        $this->airportVisitor->emptyVisitedAirports();
+        $this->initialiseFinder($sourceAirport, $destinationCity);
 
         while(true) {
             $airportToVisit = $this->findNextCheapestAirportOrThrowException();
@@ -68,6 +62,17 @@ class CheapestFlightFinder
                 $this->updatePriceAndPathToDestinationAirportIfNotVisited($route);
             }
         }
+    }
+
+    private function initialiseFinder(Airport $sourceAirport, string $destinationCity): void
+    {
+        $this->sourceAirport = $sourceAirport;
+        $this->destinationCity = $destinationCity;
+
+        $this->flightCollection = new FlightCollection();
+        $this->pricePerDestinationAirport = [];
+        $this->setSourceAirport($sourceAirport);
+        $this->airportVisitor->emptyVisitedAirports();
     }
 
     private function setSourceAirport(Airport $sourceAirport): void
