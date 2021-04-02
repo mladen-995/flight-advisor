@@ -28,18 +28,7 @@ class ImportRoutes extends Command
                 continue;
             }
 
-            Route::firstOrCreate([
-                'airline' => str_replace("\"", '', $route[0]),
-                'airline_id' => str_replace("\"", '', $route[1]),
-                'source_airport' => str_replace("\"", '', $route[2]),
-                'source_airport_id' => str_replace("\"", '', $route[3]),
-                'destination_airport' => str_replace("\"", '', $route[4]),
-                'destination_airport_id' => str_replace("\"", '', $route[5]),
-                'codeshare' => str_replace("\"", '', $route[6]),
-                'stops' => str_replace("\"", '', $route[7]),
-                'equipment' => str_replace("\"", '', $route[8]),
-                'price' => str_replace("\"", '', $route[9]),
-            ]);
+            $this->createRouteIfNotExists($route);
         }
 
         fclose($file);
@@ -49,5 +38,21 @@ class ImportRoutes extends Command
     {
         return in_array(str_replace("\"", '', $route[3]), $airportsIds) &&
             in_array(str_replace("\"", '', $route[5]), $airportsIds);
+    }
+
+    private function createRouteIfNotExists(array $route): void
+    {
+        Route::firstOrCreate([
+            'airline' => str_replace("\"", '', $route[0]),
+            'airline_id' => str_replace("\"", '', $route[1]),
+            'source_airport' => str_replace("\"", '', $route[2]),
+            'source_airport_id' => str_replace("\"", '', $route[3]),
+            'destination_airport' => str_replace("\"", '', $route[4]),
+            'destination_airport_id' => str_replace("\"", '', $route[5]),
+            'codeshare' => str_replace("\"", '', $route[6]),
+            'stops' => str_replace("\"", '', $route[7]),
+            'equipment' => str_replace("\"", '', $route[8]),
+            'price' => str_replace("\"", '', $route[9]),
+        ]);
     }
 }
