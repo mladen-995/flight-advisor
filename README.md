@@ -33,3 +33,6 @@ After you create few cities, you can import airports and routes for those cities
 In order to do that, please run the following in the exact order:
 1. `./vendor/bin/sail artisan import-airports`
 1. `./vendor/bin/sail artisan import-routes`
+
+## Running unit tests
+In order to execute tests, you need to run `./vendor/bin/sail test`
