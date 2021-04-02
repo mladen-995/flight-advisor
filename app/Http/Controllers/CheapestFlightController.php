@@ -20,6 +20,6 @@ class CheapestFlightController extends Controller
 
     public function findFlight(FindFlightRequest $request)
     {
-        return $this->cheapestFlightService->find($request->source_city, $request->destination_city)->getRoutes();
+        return $this->cheapestFlightService->find($request->source_city, $request->destination_city)->toArray();
     }
 }

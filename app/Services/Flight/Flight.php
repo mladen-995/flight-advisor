@@ -31,12 +31,26 @@ class Flight
         return $totalPrice;
     }
 
+    public function length(): int
+    {
+        return count($this->routes);
+    }
+
     public function addRoute(Route $route): void
     {
         $this->routes[] = [
             'source' => $route->sourceAirport->city,
             'destination' => $route->destinationAirport->city,
             'price' => $route->price
+        ];
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'routes' => $this->routes,
+            'length' => $this->length(),
+            'totalPrice' => $this->totalPrice()
         ];
     }
 }
