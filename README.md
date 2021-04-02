@@ -36,3 +36,6 @@ In order to do that, please run the following in the exact order:
 
 ## Running unit tests
 In order to execute tests, you need to run `./vendor/bin/sail test`
+
+## Where are endpoints located?
+To see a list of all available endpoints that application is able to serve, you can check `routes/api/php`.
