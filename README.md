@@ -16,6 +16,8 @@ In order to set up the project, after you pull it on a local machine, you need t
 Ports for web server and MySQL are changed, so it doesn't have conflicts with the instances on local machine.
 If you want to connect to MySQL database, you can use credentials from `.env`, but for the port please use value from `FORWARD_DB_PORT` inside `.env`.
 
+When you send requestes, please add header `Accept: application/json`.
+
 ## Initial users
 After you perform installation steps, you will see two users in the database which you can use right away.
 
